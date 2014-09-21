@@ -15,7 +15,7 @@ namespace WindowsFormsApplication1
         public Form1()
         {
             InitializeComponent();
-            InitializeButtons();
+            PostComponentInitialization();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -30,20 +30,35 @@ namespace WindowsFormsApplication1
 
         private void buttonClick(object sender, EventArgs e)
         {
+            bool found = false;
             int index = 0;
-            for (; index < m_InstallLocationCount; index++)
+            for (; index < 4; index++)
+            {
                 if (buttons[index] == sender)
+                {
+                    found = true;
+                    index += this.m_indexOffset;
                     break;
-            if (index != m_InstallLocationCount)
+                }
+            }
+
+            if (found && m_installLocations[index].Length > 0)
             {
                 System.Diagnostics.ProcessStartInfo start = new System.Diagnostics.ProcessStartInfo();
                 start.Arguments = "";
                 start.FileName = System.String.Copy(m_installLocations[index]);
-                start.FileName += "\\wow.exe";
+                if(this.m_is64BitInstall[index])
+                    start.FileName += "\\wow-64.exe";
+                else start.FileName += "\\wow.exe";
                 this.WindowState = FormWindowState.Minimized;
                 // Run the external process & wait for it to finish
-                using (System.Diagnostics.Process proc = System.Diagnostics.Process.Start(start))
-                    proc.WaitForExit();
+                try
+                {
+                    using (System.Diagnostics.Process proc = System.Diagnostics.Process.Start(start))
+                        proc.WaitForExit();
+                }
+                catch (Exception)
+                { Close_Click(sender, e); return; }
                 this.WindowState = FormWindowState.Normal;
             } else Close_Click(sender, e);
         }
@@ -51,6 +66,11 @@ namespace WindowsFormsApplication1
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             Close_Click(sender, e);
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            this.UpdateButtons();
         }
     }
 }
