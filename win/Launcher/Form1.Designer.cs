@@ -24,7 +24,7 @@ namespace WindowsFormsApplication1
         ///
         /// 
         /// 
-        private int m_InstallLocationCount, m_indexOffset;
+        private int m_InstallLocationCount, m_minimizeOption, m_indexOffset;
         private System.String m_NameStacks, m_LocationStacks, m_ImageStacks, m_InstallTypeStacks;
         private System.String[] m_installNames;
         private System.String[] m_installLocations;
@@ -41,6 +41,8 @@ namespace WindowsFormsApplication1
 
             if (line.StartsWith("#InstallCount"))
                 m_InstallLocationCount = System.Convert.ToInt32(line.Substring(equator, line.Length-equator));
+            else if (line.StartsWith("#MinimizeOrExit"))
+                m_minimizeOption = System.Convert.ToInt32(line.Substring(equator, line.Length - equator));
             else if (line.StartsWith("#InstallNames"))
             {
                 int quote1 = line.IndexOf('"') + 1, quote2 = line.LastIndexOf('"');
@@ -65,7 +67,7 @@ namespace WindowsFormsApplication1
 
         private void LoadIniData()
         {
-            m_InstallLocationCount = 0;
+            m_InstallLocationCount = m_indexOffset = 0; m_minimizeOption = 1;
             m_NameStacks = m_LocationStacks = m_ImageStacks = m_InstallTypeStacks = "";
             try
             {
@@ -193,6 +195,7 @@ namespace WindowsFormsApplication1
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.Close = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -203,6 +206,8 @@ namespace WindowsFormsApplication1
             this.iconPanel = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.iconIndexControl = new System.Windows.Forms.NumericUpDown();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.MinimizeButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.iconPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconIndexControl)).BeginInit();
@@ -258,6 +263,7 @@ namespace WindowsFormsApplication1
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(227, 26);
             this.toolStripMenuItem1.Text = "Set Install Locations";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click_1);
             // 
             // menuExitButton
             // 
@@ -265,7 +271,7 @@ namespace WindowsFormsApplication1
             this.menuExitButton.Name = "menuExitButton";
             this.menuExitButton.Size = new System.Drawing.Size(227, 26);
             this.menuExitButton.Text = "Exit Launcher";
-            this.menuExitButton.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            this.menuExitButton.Click += new System.EventHandler(this.menuExitButtonClick);
             // 
             // iconPanel
             // 
@@ -300,6 +306,27 @@ namespace WindowsFormsApplication1
             this.iconIndexControl.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.iconIndexControl.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "WoW Launcher";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            // 
+            // MinimizeButton
+            // 
+            this.MinimizeButton.BackColor = System.Drawing.Color.Transparent;
+            this.MinimizeButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.MinimizeButton.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+            this.MinimizeButton.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.MinimizeButton.Location = new System.Drawing.Point(956, 9);
+            this.MinimizeButton.Name = "MinimizeButton";
+            this.MinimizeButton.Size = new System.Drawing.Size(25, 25);
+            this.MinimizeButton.TabIndex = 5;
+            this.MinimizeButton.Text = "-";
+            this.MinimizeButton.UseVisualStyleBackColor = false;
+            this.MinimizeButton.Click += new System.EventHandler(this.MinimizeButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -308,6 +335,7 @@ namespace WindowsFormsApplication1
             this.BackgroundImage = global::WoW_Launcher.Properties.Resources.BurningCrusade;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(1024, 600);
+            this.Controls.Add(this.MinimizeButton);
             this.Controls.Add(this.iconPanel);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.Close);
@@ -339,6 +367,8 @@ namespace WindowsFormsApplication1
         private System.Windows.Forms.Panel iconPanel;
         private System.Windows.Forms.NumericUpDown iconIndexControl;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.Button MinimizeButton;
     }
 }
 

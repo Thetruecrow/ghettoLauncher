@@ -14,6 +14,8 @@ namespace WindowsFormsApplication1
     {
         public Form1()
         {
+            this.TopMost = true;
+            this.ShowInTaskbar = false;
             InitializeComponent();
             PostComponentInitialization();
         }
@@ -50,20 +52,30 @@ namespace WindowsFormsApplication1
                 if(this.m_is64BitInstall[index])
                     start.FileName += "\\wow-64.exe";
                 else start.FileName += "\\wow.exe";
-                this.WindowState = FormWindowState.Minimized;
-                // Run the external process & wait for it to finish
-                try
+                if (m_minimizeOption != 2)
                 {
-                    using (System.Diagnostics.Process proc = System.Diagnostics.Process.Start(start))
-                        proc.WaitForExit();
+                    // Minimize it
+                    if(m_minimizeOption == 1) this.WindowState = FormWindowState.Minimized;
+                    // Run the external process & wait for it to finish
+                    try
+                    {
+                        using (System.Diagnostics.Process proc = System.Diagnostics.Process.Start(start))
+                            proc.WaitForExit();
+                    }
+                    catch (Exception)
+                    { Close_Click(sender, e); return; }
+                    // Unminimize it
+                    if(m_minimizeOption == 1) this.WindowState = FormWindowState.Normal;
                 }
-                catch (Exception)
-                { Close_Click(sender, e); return; }
-                this.WindowState = FormWindowState.Normal;
+                else
+                {
+                    System.Diagnostics.Process.Start(start);
+                    Close_Click(sender, e);
+                }
             } else Close_Click(sender, e);
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void menuExitButtonClick(object sender, EventArgs e)
         {
             Close_Click(sender, e);
         }
@@ -71,6 +83,21 @@ namespace WindowsFormsApplication1
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             this.UpdateButtons();
+        }
+
+        private void toolStripMenuItem1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
+        }
+
+        private void MinimizeButton_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
         }
     }
 }
